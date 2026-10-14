@@ -1,0 +1,255 @@
+{
+    "schema": 1,
+    "version": "98a286304abae891b31858f4ac95f143b8e2fa0b",
+    "ttl": 86400,
+    "match": {
+        "bots": "Case-sensitive substring of the User-Agent; first match in list order wins (longest pattern first).",
+        "referrers": "Host of the Referer, or the utm_source value, lowercased and without \"www.\"; must equal the domain exactly."
+    },
+    "bots": [
+        {
+            "pattern": "cohere-training-data-crawler",
+            "name": "cohere-training-data-crawler",
+            "operator": "Cohere",
+            "category": "training"
+        },
+        {
+            "pattern": "GoogleAgent-URLContext",
+            "name": "GoogleAgent-URLContext",
+            "operator": "Google",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "Google-CloudVertexBot",
+            "name": "Google-CloudVertexBot",
+            "operator": "Google",
+            "category": "training"
+        },
+        {
+            "pattern": "Gemini-Deep-Research",
+            "name": "Gemini-Deep-Research",
+            "operator": "Google",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "meta-externalfetcher",
+            "name": "meta-externalfetcher",
+            "operator": "Meta",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "meta-externalagent",
+            "name": "meta-externalagent",
+            "operator": "Meta",
+            "category": "training"
+        },
+        {
+            "pattern": "Applebot-Extended",
+            "name": "Applebot-Extended",
+            "operator": "Apple",
+            "category": "training"
+        },
+        {
+            "pattern": "Google-NotebookLM",
+            "name": "Google-NotebookLM",
+            "operator": "Google",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "Claude-SearchBot",
+            "name": "Claude-SearchBot",
+            "operator": "Anthropic",
+            "category": "search"
+        },
+        {
+            "pattern": "Google-Extended",
+            "name": "Google-Extended",
+            "operator": "Google",
+            "category": "training"
+        },
+        {
+            "pattern": "Perplexity-User",
+            "name": "Perplexity-User",
+            "operator": "Perplexity",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "MistralAI-User",
+            "name": "MistralAI-User",
+            "operator": "Mistral AI",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "DuckAssistBot",
+            "name": "DuckAssistBot",
+            "operator": "DuckDuckGo",
+            "category": "search"
+        },
+        {
+            "pattern": "OAI-SearchBot",
+            "name": "OAI-SearchBot",
+            "operator": "OpenAI",
+            "category": "search"
+        },
+        {
+            "pattern": "PerplexityBot",
+            "name": "PerplexityBot",
+            "operator": "Perplexity",
+            "category": "search"
+        },
+        {
+            "pattern": "ChatGPT-User",
+            "name": "ChatGPT-User",
+            "operator": "OpenAI",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "anthropic-ai",
+            "name": "anthropic-ai",
+            "operator": "Anthropic",
+            "category": "training"
+        },
+        {
+            "pattern": "kagi-fetcher",
+            "name": "kagi-fetcher",
+            "operator": "Kagi",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "Claude-User",
+            "name": "Claude-User",
+            "operator": "Anthropic",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "DeepSeekBot",
+            "name": "DeepSeekBot",
+            "operator": "DeepSeek",
+            "category": "training"
+        },
+        {
+            "pattern": "FacebookBot",
+            "name": "FacebookBot",
+            "operator": "Meta",
+            "category": "training"
+        },
+        {
+            "pattern": "GoogleOther",
+            "name": "GoogleOther",
+            "operator": "Google",
+            "category": "training"
+        },
+        {
+            "pattern": "Bytespider",
+            "name": "Bytespider",
+            "operator": "ByteDance",
+            "category": "training"
+        },
+        {
+            "pattern": "Claude-Web",
+            "name": "Claude-Web",
+            "operator": "Anthropic",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "Amazonbot",
+            "name": "Amazonbot",
+            "operator": "Amazon",
+            "category": "search"
+        },
+        {
+            "pattern": "ClaudeBot",
+            "name": "ClaudeBot",
+            "operator": "Anthropic",
+            "category": "training"
+        },
+        {
+            "pattern": "cohere-ai",
+            "name": "cohere-ai",
+            "operator": "Cohere",
+            "category": "user_fetch"
+        },
+        {
+            "pattern": "Applebot",
+            "name": "Applebot",
+            "operator": "Apple",
+            "category": "search"
+        },
+        {
+            "pattern": "PetalBot",
+            "name": "PetalBot",
+            "operator": "Huawei",
+            "category": "search"
+        },
+        {
+            "pattern": "Timpibot",
+            "name": "Timpibot",
+            "operator": "Timpi",
+            "category": "training"
+        },
+        {
+            "pattern": "Diffbot",
+            "name": "Diffbot",
+            "operator": "Diffbot",
+            "category": "training"
+        },
+        {
+            "pattern": "AI2Bot",
+            "name": "AI2Bot",
+            "operator": "Ai2",
+            "category": "training"
+        },
+        {
+            "pattern": "GPTBot",
+            "name": "GPTBot",
+            "operator": "OpenAI",
+            "category": "training"
+        },
+        {
+            "pattern": "YouBot",
+            "name": "YouBot",
+            "operator": "You.com",
+            "category": "search"
+        },
+        {
+            "pattern": "CCBot",
+            "name": "CCBot",
+            "operator": "Common Crawl",
+            "category": "training"
+        }
+    ],
+    "referrers": [
+        {
+            "domain": "chat.openai.com",
+            "name": "ChatGPT (legacy)"
+        },
+        {
+            "domain": "chatgpt.com",
+            "name": "ChatGPT"
+        },
+        {
+            "domain": "claude.ai",
+            "name": "Claude"
+        },
+        {
+            "domain": "copilot.microsoft.com",
+            "name": "Microsoft Copilot"
+        },
+        {
+            "domain": "gemini.google.com",
+            "name": "Google Gemini"
+        },
+        {
+            "domain": "perplexity.ai",
+            "name": "Perplexity"
+        },
+        {
+            "domain": "phind.com",
+            "name": "Phind"
+        },
+        {
+            "domain": "you.com",
+            "name": "You.com"
+        }
+    ]
+}

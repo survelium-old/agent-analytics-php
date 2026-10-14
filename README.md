@@ -1,42 +1,99 @@
-# :package_description
+# Survelium Agent Analytics for PHP
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![Tests](https://github.com/spatie/package-skeleton-php/actions/workflows/run-tests-pest.yml/badge.svg)](https://github.com/:vendor_slug/:package_slug/actions/workflows/run-tests.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This package can be used as to scaffold a framework agnostic package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/survelium/agent-analytics-php.svg?style=flat-square)](https://packagist.org/packages/survelium/agent-analytics-php)
+[![Tests](https://img.shields.io/github/actions/workflow/status/survelium/agent-analytics-php/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/survelium/agent-analytics-php/actions/workflows/run-tests.yml)
 
-1. Press the "Use template" button at the top of this repo to create a new repo with the contents of this skeleton
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Try and limit it to a paragraph or two. Consider adding a small example.
+See which AI crawlers read your site and how many people AI assistants send you, in [Survelium](https://survelium.com).
 
-## Support us
+AI crawlers (GPTBot, ClaudeBot, PerplexityBot, …) do not run JavaScript, so a JS snippet never sees them. This
+package runs on your server instead: it recognises AI crawlers by user agent and visitors arriving from
+ChatGPT, Perplexity, Claude, Gemini or Copilot by referrer, buffers them locally and sends them to Survelium in
+batches **after** the response has gone out to the visitor.
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
+This is the framework-agnostic core. For Laravel use
+[`survelium/agent-analytics-laravel`](https://github.com/survelium/agent-analytics-laravel); for WordPress use
+the [plugin](https://github.com/survelium/agent-analytics-wordpress).
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
+## What leaves your server
 
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+| | Sent | Never sent |
+|---|---|---|
+| AI crawler hit | time, user agent, path, HTTP status, IP (to verify it is really that crawler) | — |
+| Visitor from an AI assistant | time, assistant domain (e.g. `chatgpt.com`), path, user agent | IP, full referrer, cookies |
+| Every other request | a daily count, used for "share of traffic from AI" | anything about the request |
+
+Survelium checks crawler IPs against the ranges each operator publishes and deletes them after 30 days.
+
+## Requirements
+
+PHP 8.1+, `ext-json`. `ext-curl` is used when present, PHP streams otherwise. No other dependencies.
 
 ## Installation
 
-You can install the package via composer:
-
 ```bash
-composer require :vendor_slug/:package_slug
+composer require survelium/agent-analytics-php
 ```
+
+Create an ingest key in Survelium → AI traffic → Integration.
 
 ## Usage
 
+As early as possible in every request (your front controller, or `auto_prepend_file`):
+
 ```php
-$skeleton = new VendorName\Skeleton();
-echo $skeleton->echoPhrase('Hello, VendorName!');
+use Survelium\AgentAnalytics\AgentAnalytics;
+use Survelium\AgentAnalytics\Config;
+
+AgentAnalytics::start(new Config(apiKey: 'svk_...'));
 ```
+
+That is all. At shutdown the request is recorded and, every 50 items or 60 seconds, the buffer is sent. Under
+PHP-FPM or LiteSpeed the response is finished first, so visitors never wait on it.
+
+### Options
+
+```php
+new Config(
+    apiKey: 'svk_...',
+    trackReferrals: true,                      // false = crawlers only
+    denyPaths: ['/admin', '/wp-admin'],        // path prefixes never reported or counted
+    ipHeader: 'HTTP_CF_CONNECTING_IP',         // only behind a proxy that always sets it
+    storagePath: '/var/www/storage/survelium', // default: the system temp folder
+    batchSize: 50,
+    flushIntervalSeconds: 60,
+    maxBufferedItems: 20000,                   // when full, new items are dropped
+    timeoutSeconds: 5.0,
+);
+```
+
+### Driving it yourself
+
+Integrations with their own lifecycle (queues, cron) can call the parts directly:
+
+```php
+$analytics = AgentAnalytics::make($config);   // or pass your own Storage / Transport
+
+$analytics->record(Hit::fromGlobals($config, http_response_code()));
+
+if ($analytics->shouldFlush()) {
+    $analytics->flush();                        // safe from cron; one flush at a time
+}
+
+$analytics->status();                           // buffer size, last error, signatures version
+```
+
+`Storage` (buffer, counters, cached signatures) and `Transport` (HTTP) are interfaces; `FakeTransport` is
+included for tests.
+
+## How it behaves when things go wrong
+
+- **Survelium unreachable or 5xx:** data stays buffered, retries back off from 30 s to an hour.
+- **Key revoked (401):** pauses an hour. **Plan without AI traffic (402):** pauses six hours. Data is kept.
+- **Rate limited (429):** waits for `Retry-After`.
+- **Storage folder not writable:** does nothing. Analytics never breaks your site.
+
+The bot list is fetched from `GET /api/v1/signatures` once a day (with an ETag), with a bundled copy as a
+fallback. Survelium re-checks every hit against its own list, so an outdated copy only misses the newest bots.
 
 ## Testing
 
@@ -46,21 +103,12 @@ composer test
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+See [CHANGELOG](CHANGELOG.md).
 
-## Contributing
+## Security
 
-Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+Please report vulnerabilities through [GitHub security advisories](../../security/advisories/new), not in issues.
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). See [License File](LICENSE.md).
