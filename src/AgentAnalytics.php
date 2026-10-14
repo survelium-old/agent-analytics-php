@@ -91,11 +91,19 @@ final class AgentAnalytics
             return null;
         }
 
-        $this->storage->incrementTotal(gmdate('Y-m-d', $hit->time ?? time()));
+        $day = gmdate('Y-m-d', $hit->time ?? time());
+
+        if ($this->config->countAllHits) {
+            $this->storage->incrementTotal($day);
+        }
 
         $userAgent = $hit->userAgent !== null ? mb_substr($hit->userAgent, 0, 1024) : null;
 
         if ($this->signatures()->matchBot($userAgent) !== null) {
+            if (! $this->config->countAllHits) {
+                $this->storage->incrementTotal($day);
+            }
+
             $this->storage->push([
                 'kind' => 'event',
                 'ts' => $hit->timestamp(),

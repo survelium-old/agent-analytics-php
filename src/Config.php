@@ -13,6 +13,8 @@ final class Config
      * @param  string|null  $ipHeader  Server variable holding the real client IP behind a proxy, e.g.
      *                                 "HTTP_CF_CONNECTING_IP". Only trust it when the proxy always sets it.
      * @param  string|null  $storagePath  Folder for the buffer, counters and cached signatures. Defaults to the system temp folder.
+     * @param  bool  $countAllHits  False: only AI crawler hits go into the daily total, because the host counts page
+     *                              views another way (the WordPress plugin uses a JS ping, since cached pages never reach PHP).
      */
     public function __construct(
         public readonly string $apiKey,
@@ -25,6 +27,7 @@ final class Config
         public readonly int $flushIntervalSeconds = 60,
         public readonly int $maxBufferedItems = 20000,
         public readonly float $timeoutSeconds = 5.0,
+        public readonly bool $countAllHits = true,
     ) {}
 
     public function storagePath(): string

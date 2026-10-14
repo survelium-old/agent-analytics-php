@@ -40,6 +40,17 @@ describe('recording', function () {
             ->and($analytics->storage->totals(1))->toBe([gmdate('Y-m-d') => 1]);
     });
 
+    it('counts only AI crawler hits in the total when the host counts page views itself', function () {
+        $analytics = analytics(new FakeTransport, ['countAllHits' => false]);
+
+        $analytics->record(new Hit('/', CHROME_UA));
+        $analytics->record(new Hit('/', CHROME_UA, 'https://chatgpt.com/'));
+        $analytics->record(new Hit('/', GPTBOT_UA));
+
+        expect($analytics->storage->stats()['count'])->toBe(2)
+            ->and($analytics->storage->totals(1))->toBe([gmdate('Y-m-d') => 1]);
+    });
+
     it('ignores denied paths entirely', function () {
         $analytics = analytics(new FakeTransport, ['denyPaths' => ['/wp-admin']]);
 

@@ -79,6 +79,7 @@ new Config(
     flushIntervalSeconds: 60,
     maxBufferedItems: 20000,                   // when full, new items are dropped
     timeoutSeconds: 5.0,
+    countAllHits: true,                        // false = only AI crawler hits go into the daily total
 );
 ```
 
