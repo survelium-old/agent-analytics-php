@@ -30,11 +30,27 @@ PHP 8.1+, `ext-json`. `ext-curl` is used when present, PHP streams otherwise. No
 
 ## Installation
 
+> **Until the package is on Packagist**, add the repository to your `composer.json` first:
+>
+> ```json
+> "repositories": [{ "type": "vcs", "url": "https://github.com/survelium/agent-analytics-php" }]
+> ```
+>
+> and require the development line: `composer require survelium/agent-analytics-php:^0.1@dev`.
+
 ```bash
 composer require survelium/agent-analytics-php
 ```
 
 Create an ingest key in Survelium → AI traffic → Integration.
+
+### Before you go live, check
+
+- **Behind Cloudflare or a load balancer,** set `ipHeader` (below), or every crawler arrives with the proxy's IP
+  and Survelium cannot verify it.
+- **A full-page cache in front of PHP** (LiteSpeed Cache, Varnish, Cloudflare "cache everything") means cached
+  pages never run PHP, so crawlers reading them are not seen. Exclude AI crawler user agents from that cache.
+- **The storage folder is writable** by the web server user. If it is not, nothing is recorded (and nothing breaks).
 
 ## Usage
 
