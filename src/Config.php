@@ -13,8 +13,9 @@ final class Config
      * @param  string|null  $ipHeader  Server variable holding the real client IP behind a proxy, e.g.
      *                                 "HTTP_CF_CONNECTING_IP". Only trust it when the proxy always sets it.
      * @param  string|null  $storagePath  Folder for the buffer, counters and cached signatures. Defaults to the system temp folder.
-     * @param  bool  $countAllHits  False: only AI crawler hits go into the daily total, because the host counts page
-     *                              views another way (the WordPress plugin uses a JS ping, since cached pages never reach PHP).
+     * @param  bool  $countAllHits  The daily total is people plus the AI crawlers reported; other bots never count.
+     *                              True: count people here. False: the host counts them another way (the WordPress
+     *                              plugin uses a JS ping, since cached pages never reach PHP), so only AI crawlers are added.
      */
     public function __construct(
         public readonly string $apiKey,

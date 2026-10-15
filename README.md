@@ -20,7 +20,7 @@ the [plugin](https://github.com/survelium/agent-analytics-wordpress).
 |---|---|---|
 | AI crawler hit | time, user agent, path, HTTP status, IP (to verify it is really that crawler) | — |
 | Visitor from an AI assistant | time, assistant domain (e.g. `chatgpt.com`), path, user agent | IP, full referrer, cookies |
-| Every other request | a daily count, used for "share of traffic from AI" | anything about the request |
+| Every visit by a person | a daily count, used for "share of traffic from AI" (other bots — Googlebot, SEO tools, monitors — are not counted) | anything about the request |
 
 Survelium checks crawler IPs against the ranges each operator publishes and deletes them after 30 days.
 
@@ -79,7 +79,7 @@ new Config(
     flushIntervalSeconds: 60,
     maxBufferedItems: 20000,                   // when full, new items are dropped
     timeoutSeconds: 5.0,
-    countAllHits: true,                        // false = only AI crawler hits go into the daily total
+    countAllHits: true,                        // count people in the daily total; false = only AI crawlers (the host counts people itself)
 );
 ```
 

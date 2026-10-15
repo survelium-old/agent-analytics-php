@@ -1,6 +1,6 @@
 {
     "schema": 1,
-    "version": "98a286304abae891b31858f4ac95f143b8e2fa0b",
+    "version": "dc7b8856e518bbb70dd57fc4884fc86e6632a5a0",
     "ttl": 86400,
     "match": {
         "bots": "Case-sensitive substring of the User-Agent; first match in list order wins (longest pattern first).",
@@ -173,12 +173,6 @@
             "pattern": "Applebot",
             "name": "Applebot",
             "operator": "Apple",
-            "category": "search"
-        },
-        {
-            "pattern": "PetalBot",
-            "name": "PetalBot",
-            "operator": "Huawei",
             "category": "search"
         },
         {

@@ -40,6 +40,19 @@ describe('recording', function () {
             ->and($analytics->storage->totals(1))->toBe([gmdate('Y-m-d') => 1]);
     });
 
+    it('leaves other bots and scripts out of the total, so it counts people plus AI crawlers', function () {
+        $analytics = analytics(new FakeTransport);
+
+        $analytics->record(new Hit('/', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'));
+        $analytics->record(new Hit('/', 'Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)'));
+        $analytics->record(new Hit('/', 'curl/8.4.0'));
+        $analytics->record(new Hit('/', null));
+        $analytics->record(new Hit('/', CHROME_UA));
+        $analytics->record(new Hit('/', GPTBOT_UA));
+
+        expect($analytics->storage->totals(1))->toBe([gmdate('Y-m-d') => 2]);
+    });
+
     it('counts only AI crawler hits in the total when the host counts page views itself', function () {
         $analytics = analytics(new FakeTransport, ['countAllHits' => false]);
 

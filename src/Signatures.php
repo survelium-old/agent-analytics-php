@@ -40,6 +40,26 @@ final class Signatures
     }
 
     /**
+     * Any automated client: search engines, SEO tools, uptime monitors, link
+     * previews, scripts. Used to keep them out of the daily total, so the AI
+     * share is measured against people (plus the AI crawlers we report).
+     * A missing user-agent counts as automated; real browsers always send one.
+     */
+    public static function looksAutomated(?string $userAgent): bool
+    {
+        if ($userAgent === null || trim($userAgent) === '') {
+            return true;
+        }
+
+        return preg_match(
+            '~bot|crawl|spider|slurp|scrap|fetch|scan|monitor|preview|archiver|headless|lighthouse|pingdom|uptime|validator'
+            .'|facebookexternalhit|embedly|whatsapp|curl|wget|python|java/|go-http|okhttp|axios|node-fetch|undici|guzzle'
+            .'|libwww|httpclient|http-client|postman|insomnia|^php|^ruby|^perl~i',
+            $userAgent,
+        ) === 1;
+    }
+
+    /**
      * The copy shipped with the package, used until the first successful fetch.
      */
     public static function bundled(): self

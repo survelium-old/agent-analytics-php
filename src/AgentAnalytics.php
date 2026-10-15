@@ -17,7 +17,7 @@ use Throwable;
  */
 final class AgentAnalytics
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
 
     public const MAX_ITEMS_PER_REQUEST = 1000;
 
@@ -92,17 +92,10 @@ final class AgentAnalytics
         }
 
         $day = gmdate('Y-m-d', $hit->time ?? time());
-
-        if ($this->config->countAllHits) {
-            $this->storage->incrementTotal($day);
-        }
-
         $userAgent = $hit->userAgent !== null ? mb_substr($hit->userAgent, 0, 1024) : null;
 
         if ($this->signatures()->matchBot($userAgent) !== null) {
-            if (! $this->config->countAllHits) {
-                $this->storage->incrementTotal($day);
-            }
+            $this->storage->incrementTotal($day);
 
             $this->storage->push([
                 'kind' => 'event',
@@ -114,6 +107,10 @@ final class AgentAnalytics
             ], $this->config->maxBufferedItems);
 
             return 'event';
+        }
+
+        if ($this->config->countAllHits && ! Signatures::looksAutomated($userAgent)) {
+            $this->storage->incrementTotal($day);
         }
 
         if (! $this->config->trackReferrals) {
