@@ -63,7 +63,8 @@ use Survelium\AgentAnalytics\Config;
 AgentAnalytics::start(new Config(apiKey: 'svk_...'));
 ```
 
-That is all. At shutdown the request is recorded and, every 50 items or 60 seconds, the buffer is sent. Under
+That is all. At shutdown the request is recorded (page views only: `GET`/`HEAD`, not XHR or prefetch) and, every
+50 items or 60 seconds, the buffer is sent. Under
 PHP-FPM or LiteSpeed the response is finished first, so visitors never wait on it.
 
 ### Options

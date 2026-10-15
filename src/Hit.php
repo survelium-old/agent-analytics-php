@@ -44,6 +44,22 @@ final class Hit
     }
 
     /**
+     * Crawlers fetch pages with GET/HEAD; form posts, XHR calls (a shop's cart
+     * widget, for instance) and prefetches would inflate the daily total.
+     *
+     * @param  array<string, mixed>  $server
+     */
+    public static function isPageView(array $server): bool
+    {
+        $header = fn (string $key): string => is_string($server[$key] ?? null) ? $server[$key] : '';
+        $method = strtoupper($header('REQUEST_METHOD') ?: 'GET');
+
+        return in_array($method, ['GET', 'HEAD'], true)
+            && strcasecmp($header('HTTP_X_REQUESTED_WITH'), 'XMLHttpRequest') !== 0
+            && stripos($header('HTTP_SEC_PURPOSE').$header('HTTP_PURPOSE'), 'prefetch') === false;
+    }
+
+    /**
      * Path and query only, even if a full URL was passed.
      */
     public function normalizedPath(): string

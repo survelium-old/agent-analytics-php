@@ -46,3 +46,14 @@ it('drops IPs that are not IPs', function () {
     expect((new Hit('/', ip: 'unknown'))->validIp())->toBeNull()
         ->and((new Hit('/', ip: '2a06:98c0::1'))->validIp())->toBe('2a06:98c0::1');
 });
+
+it('treats only plain GET/HEAD requests as page views', function (array $server, bool $pageView) {
+    expect(Hit::isPageView($server))->toBe($pageView);
+})->with([
+    'get' => [['REQUEST_METHOD' => 'GET'], true],
+    'head' => [['REQUEST_METHOD' => 'HEAD'], true],
+    'no method (cli)' => [[], true],
+    'post' => [['REQUEST_METHOD' => 'POST'], false],
+    'xhr' => [['REQUEST_METHOD' => 'GET', 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'], false],
+    'prefetch' => [['REQUEST_METHOD' => 'GET', 'HTTP_SEC_PURPOSE' => 'prefetch;prerender'], false],
+]);

@@ -65,8 +65,10 @@ final class AgentAnalytics
     public function handleShutdown(): void
     {
         try {
-            $status = http_response_code();
-            $this->record(Hit::fromGlobals($this->config, is_int($status) ? $status : null));
+            if (Hit::isPageView($_SERVER)) {
+                $status = http_response_code();
+                $this->record(Hit::fromGlobals($this->config, is_int($status) ? $status : null));
+            }
 
             if ($this->shouldFlush()) {
                 $this->finishResponse();
